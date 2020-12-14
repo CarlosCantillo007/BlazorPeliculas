@@ -1,7 +1,32 @@
 ﻿@page "/"
+@inject ServiciosSingleton singleton
+@inject IRepositorio repositorio 
 
-<h1>Hello, world!</h1>
+<div>
+    <h3>Películas</h3>
+    <ListadoPeliculas Peliculas="Peliculas" />
 
-Welcome to your new app.
+</div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+<button @onclick="AgregarPelicula">Agregar Pelicula</button>
+<p>Singleton count: @singleton.Valor</p>
+
+@code
+{
+    private List<Pelicula> Peliculas;
+
+    protected override void OnInitialized()
+    {
+        Peliculas = repositorio.ObtenerPeliculas();
+
+    }
+
+    void AgregarPelicula()
+    {
+        Peliculas.Add(new Pelicula() { Titulo = "Nueva Pelicula", Lanzamiento = DateTime.Today });
+    }
+
+
+}
+
