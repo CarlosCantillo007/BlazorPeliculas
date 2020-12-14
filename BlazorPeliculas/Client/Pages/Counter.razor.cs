@@ -13,15 +13,29 @@ namespace BlazorPeliculas.Client.Pages
         [Inject] public ServiciosTransient transient { get; set; }
         [Inject] public IJSRuntime JS { get; set; }
 
+        IJSObjectReference modulo;
+
+
+
         private int currentCount = 0;
         static int currentCountStatic = 0;
-        private async Task IncrementCount()
+
+        [JSInvokable]
+        public async Task IncrementCount()
         {
+            modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./js/Counter.js");
+            await modulo.InvokeVoidAsync("mostrarAlerta", "Hola mundo");
+
             currentCount++;
             singleton.Valor = currentCount;
             transient.Valor = currentCount;
             currentCountStatic++;
             await JS.InvokeVoidAsync("pruebaPuntoNetStatic");
+        }
+
+        protected async Task IncrementCountJavaScript()
+        {
+            await JS.InvokeVoidAsync("pruebaPunteNETInstancia", DotNetObjectReference.Create(this));
         }
 
 

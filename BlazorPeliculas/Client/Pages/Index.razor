@@ -1,10 +1,10 @@
 ﻿@page "/"
 @inject ServiciosSingleton singleton
-@inject IRepositorio repositorio 
+@inject IRepositorio repositorio
 
 <div>
     <h3>Películas</h3>
-    <ListadoPeliculas Peliculas="Peliculas" />
+    <ListadoPeliculas @ref="listado" Peliculas="Peliculas" />
 
 </div>
 
@@ -14,12 +14,15 @@
 
 @code
 {
+
     private List<Pelicula> Peliculas;
+
+    ListadoPeliculas listado;
 
     protected override void OnInitialized()
     {
+        var list = listado.Peliculas;
         Peliculas = repositorio.ObtenerPeliculas();
-
     }
 
     void AgregarPelicula()
