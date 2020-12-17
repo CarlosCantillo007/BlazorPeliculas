@@ -9,13 +9,9 @@ namespace BlazorPeliculas.Client.Pages
 {
     public partial class Counter
     {
-        [Inject] public ServiciosSingleton singleton { get; set; }
-        [Inject] public ServiciosTransient transient { get; set; }
         [Inject] public IJSRuntime JS { get; set; }
 
         IJSObjectReference modulo;
-
-
 
         private int currentCount = 0;
         static int currentCountStatic = 0;
@@ -27,8 +23,6 @@ namespace BlazorPeliculas.Client.Pages
             await modulo.InvokeVoidAsync("mostrarAlerta", "Hola mundo");
 
             currentCount++;
-            singleton.Valor = currentCount;
-            transient.Valor = currentCount;
             currentCountStatic++;
             await JS.InvokeVoidAsync("pruebaPuntoNetStatic");
         }

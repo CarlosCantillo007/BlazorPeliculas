@@ -1,35 +1,20 @@
 ﻿@page "/"
-@inject ServiciosSingleton singleton
-@inject IRepositorio repositorio
+@inject IRepositorio repositorio 
 
 <div>
     <h3>Películas</h3>
-    <ListadoPeliculas @ref="listado" Peliculas="Peliculas" />
-
+    <ListadoPeliculas Peliculas="Peliculas" />
 </div>
-
-
-<button @onclick="AgregarPelicula">Agregar Pelicula</button>
-<p>Singleton count: @singleton.Valor</p>
 
 @code
 {
-
     private List<Pelicula> Peliculas;
-
-    ListadoPeliculas listado;
 
     protected override void OnInitialized()
     {
-        var list = listado.Peliculas;
         Peliculas = repositorio.ObtenerPeliculas();
-    }
 
-    void AgregarPelicula()
-    {
-        Peliculas.Add(new Pelicula() { Titulo = "Nueva Pelicula", Lanzamiento = DateTime.Today });
     }
-
 
 }
 
