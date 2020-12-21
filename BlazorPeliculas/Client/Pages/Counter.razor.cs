@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MathNet.Numerics.Statistics;
+
 
 namespace BlazorPeliculas.Client.Pages
 {
@@ -19,8 +21,12 @@ namespace BlazorPeliculas.Client.Pages
         [JSInvokable]
         public async Task IncrementCount()
         {
+            var arreglo = new double[] { 1, 2, 3, 4, 5 };
+            var max = arreglo.Maximum();
+            var min = arreglo.Minimum();
+
             modulo = await JS.InvokeAsync<IJSObjectReference>("import", "./js/Counter.js");
-            await modulo.InvokeVoidAsync("mostrarAlerta", "Hola mundo");
+            await modulo.InvokeVoidAsync("mostrarAlerta", $"El max es {max} y el min es {min}");
 
             currentCount++;
             currentCountStatic++;

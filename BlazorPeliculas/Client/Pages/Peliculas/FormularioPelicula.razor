@@ -1,0 +1,103 @@
+﻿<EditForm Model="Pelicula" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label>Titulo:</label>
+        <div>
+            <InputText class="form-group" @bind-Value="@Pelicula.Titulo" />
+            <ValidationMessage For="(() => Pelicula.Titulo)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="form-check-label" for="enCartelera">En cartelera:</label>
+        <div>
+            <InputCheckbox class="form-check-input" id="enCartelera" @bind-Value="@Pelicula.EnCartelera" />
+            <ValidationMessage For="(() => Pelicula.EnCartelera)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Trailer:</label>
+        <div>
+            <InputText class="form-group" @bind-Value="@Pelicula.Trailer" />
+            <ValidationMessage For="@(() => Pelicula.Trailer)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Fecha de Lanzamiento:</label>
+        <div>
+            <InputDate class="form-control" @bind-Value="@Pelicula.Lanzamiento" />
+            <ValidationMessage For="@(() => Pelicula.Lanzamiento)" />
+        </div>
+    </div>
+    <div class="form-group form-markdown">
+        <InputMarkdown @bind-Value="@Pelicula.Resumen" For="@(() => Pelicula.Resumen)" Label="Resumen" />
+    </div>
+    <div class="form-group">
+        <InputImg Label="Foto" ImagenSeleccionada="ImagenSeleccionada" ImagenURL="" />
+    </div>
+    <div class="form-group">
+        <label>Generos</label>
+        <div>
+            <SelectorMultiple Seleccionados="Seleccionados" NoSeleccionados="NoSeleccionados"></SelectorMultiple>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Actores</label>
+        <div>
+            <SelectorMultipleTypeahead Context="persona"
+                                       SearchMethod="BuscarActores" ElementosSeleccionados="ActoresSeleccionados">
+                <MyListTemplate>
+                    @persona.Nombre
+                </MyListTemplate>
+                <MyResultTemplate>
+                    <img style="width:50px" src="@persona.Foto"/>
+                    @persona.Nombre
+                </MyResultTemplate>
+            </SelectorMultipleTypeahead>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar Pelicula</button>
+</EditForm>
+
+
+@code {
+    [Parameter] public Pelicula Pelicula { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public List<Genero> GenerosSeleccionados { get; set; } = new List<Genero>();
+    [Parameter] public List<Genero> GenerosNoSeleccionados { get; set; } = new List<Genero>();
+    [Parameter] public List<Persona> ActoresSeleccionados { get; set; } = new List<Persona>();
+
+
+    private List<SelectorMultipleModel> Seleccionados { get; set; } = new List<SelectorMultipleModel>();
+    private List<SelectorMultipleModel> NoSeleccionados { get; set; } = new List<SelectorMultipleModel>();
+
+    private string posterTemporal;
+
+    protected override void OnInitialized()
+    {
+        Seleccionados = GenerosSeleccionados.Select(x => new SelectorMultipleModel(x.Id.ToString(), x.Nombre)).ToList();
+        NoSeleccionados = GenerosNoSeleccionados.Select(x => new SelectorMultipleModel(x.Id.ToString(), x.Nombre)).ToList();
+    }
+
+    private void ImagenSeleccionada(string imagenBase64)
+    {
+        Pelicula.Poster = imagenBase64;
+
+        if (!string.IsNullOrWhiteSpace(Pelicula.Poster))
+        {
+            posterTemporal = Pelicula.Poster;
+            Pelicula.Poster = null;
+        }
+    }
+
+    private async Task<IEnumerable<Persona>> BuscarActores(string searchText)
+    {
+
+        return new List<Persona>()
+        {
+            new Persona(){ Id=1,Nombre="Tom Holland", Foto="https://m.media-amazon.com/images/M/MV5BNTAzMzA3NjQwOF5BMl5BanBnXkFtZTgwMDUzODQ5MTI@._V1_UY317_CR23,0,214,317_AL_.jpg"},
+            new Persona(){ Id=2,Nombre="Tom Hanks", Foto="https://m.media-amazon.com/images/M/MV5BMTQ2MjMwNDA3Nl5BMl5BanBnXkFtZTcwMTA2NDY3NQ@@._V1_UY317_CR2,0,214,317_AL_.jpg"}
+        };
+    }
+}
