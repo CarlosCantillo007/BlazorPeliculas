@@ -1,10 +1,64 @@
 ﻿@page "/generos"
+@inject IRepositorio repositorio
+
 <h3>Indice Generos</h3>
 
 <div class="form-group">
     <a class="btn btn-info" type="button" href="generos/crear">Agregar Genero</a>
 </div>
 
+<ListadoGenerico Listado="Generos">
+    <HayRegistrosCompleto>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Nombre</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Generos)
+                {
+                    <tr>
+                        <td>
+                            <a href="/generos/editar/@item.Id" class="btn btn-success">Editar</a>
+                            <button @onclick="@(()=>BorrarGenero(item))" class="btn btn-danger">Borrar</button>
+                        </td>
+                        <td>@item.Nombre</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </HayRegistrosCompleto>
+</ListadoGenerico>
+
 @code {
 
+    public List<Genero> Generos { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await cargar();
+    }
+
+    private async Task cargar() {
+        var responseHttp = await repositorio.Get<List<Genero>>("api/generos");
+        Generos = responseHttp.Response;
+    }
+
+    private async Task BorrarGenero(Genero genero)
+    {
+        var responseHttp = await repositorio.Delete($"api/generos/{genero.Id}");
+        if (responseHttp.Error)
+        {
+            if (true)
+            {
+               Console.WriteLine(await responseHttp.GetBody());
+            }
+        }
+        else
+        {
+            await cargar();
+        }
+    }
 }
